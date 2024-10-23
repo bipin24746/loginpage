@@ -12,12 +12,17 @@ class _RegisterpageState extends State<Registerpage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(
+          color: Colors.white,
+          // opacity: 0.1
+        ),
         centerTitle: true,
         title: Text(
           "Register Page",
           style: TextStyle(
-              color: Colors.blue, fontSize: 30, fontWeight: FontWeight.bold),
+              color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold),
         ),
+        backgroundColor: Colors.blue,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -40,7 +45,7 @@ class _RegisterpageState extends State<Registerpage> {
                       ),
                       SizedBox(height: 8),
                       TextField(
-                        textAlign: TextAlign.center,
+                        // textAlign: TextAlign.center,
                         decoration: InputDecoration(
                             border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20),
@@ -68,7 +73,7 @@ class _RegisterpageState extends State<Registerpage> {
                         decoration: InputDecoration(
                           border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20)),
-                          hintText: "Last Names",
+                          hintText: "Last Name",
                         ),
                       ),
                     ],
