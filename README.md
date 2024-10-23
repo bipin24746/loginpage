@@ -1,6 +1,9 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
 # loginpage
 =======
+=======
+>>>>>>> 6ab392accb935ebdcb35661b009adb5533a2a182
 # loginpage
 
 A new Flutter project.
@@ -17,4 +20,7 @@ A few resources to get you started if this is your first Flutter project:
 For help getting started with Flutter development, view the
 [online documentation](https://docs.flutter.dev/), which offers tutorials,
 samples, guidance on mobile development, and a full API reference.
+<<<<<<< HEAD
 >>>>>>> 6ab392a (added Login and Register Form)
+=======
+>>>>>>> 6ab392accb935ebdcb35661b009adb5533a2a182
