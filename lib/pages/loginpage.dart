@@ -17,13 +17,15 @@ class _LoginpageState extends State<Loginpage> {
     return Scaffold(
       appBar: AppBar(
           centerTitle: true,
+          iconTheme: IconThemeData(color: Colors.white),
           title: Text(
             "LoginPage",
             style: TextStyle(
                 fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
           ),
           backgroundColor: Colors.blue),
-      body: SingleChildScrollView( // Use SingleChildScrollView for scrolling
+      body: SingleChildScrollView(
+        // Use SingleChildScrollView for scrolling
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -41,7 +43,8 @@ class _LoginpageState extends State<Loginpage> {
             SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.only(left: 30),
-              child: Text("Enter Your Email",
+              child: Text(
+                "Enter Your Email",
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
               ),
             ),
@@ -57,7 +60,8 @@ class _LoginpageState extends State<Loginpage> {
             ),
             Padding(
               padding: const EdgeInsets.only(left: 30),
-              child: Text("Enter Your Password",
+              child: Text(
+                "Enter Your Password",
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
               ),
             ),
@@ -102,8 +106,10 @@ class _LoginpageState extends State<Loginpage> {
                             builder: (context) => Registerpage(),
                           ));
                     },
-                    child: Text("Create Account", style: TextStyle(color: Colors.white)),
-                    style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                    child: Text("Create Account",
+                        style: TextStyle(color: Colors.white)),
+                    style:
+                        ElevatedButton.styleFrom(backgroundColor: Colors.blue),
                   ),
                 ],
               ),
