@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart'; // Import Firebase
 import 'package:loginpage/pages/loginpage.dart';
-import 'package:loginpage/pages/registerpage.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding
+      .ensureInitialized(); // Ensures Firebase is initialized correctly
+  await Firebase.initializeApp(); // Initialize Firebase
   runApp(const MyApp());
 }
 

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:loginpage/pages/loginpage.dart';
 
@@ -9,16 +10,64 @@ class Registerpage extends StatefulWidget {
 }
 
 class _RegisterpageState extends State<Registerpage> {
+  TextEditingController userName = TextEditingController();
+  TextEditingController mobileNum = TextEditingController();
+  TextEditingController emailAddress = TextEditingController();
+  TextEditingController newPassword = TextEditingController();
+  TextEditingController confirmPassword = TextEditingController();
+
+  final FirebaseAuth auth = FirebaseAuth.instance;
+
+  Future registerUser() async {
+    String name = userName.text.trim();
+    String email = emailAddress.text.trim();
+    String password = newPassword.text.trim();
+    String confirmpassword = confirmPassword.text.trim();
+
+    if (password != confirmpassword) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Passwords don't match")));
+      return;
+    }
+
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(email: email, password: password);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+            content: Text(
+                "Registration Successful. User: ${userCredential.user!.email}")),
+      );
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => Loginpage()));
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        showMessage('The password provided is too weak.');
+      } else if (e.code == 'email-already-in-use') {
+        showMessage('An account already exists for that email.');
+      } else {
+        showMessage(e.message.toString());
+      }
+    } catch (e) {
+      showMessage(e.toString());
+    }
+  }
+
+  void showMessage(String message) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          iconTheme: IconThemeData(
+          iconTheme: const IconThemeData(
             color: Colors.white,
-            // opacity: 0.1
           ),
           centerTitle: true,
-          title: Text(
+          title: const Text(
             "Create Account",
             style: TextStyle(
                 color: Colors.white, fontSize: 30, fontWeight: FontWeight.bold),
@@ -28,123 +77,94 @@ class _RegisterpageState extends State<Registerpage> {
         body: SingleChildScrollView(
           child: Column(
             children: [
-              Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: TextField(
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        hintText: "Full Name",
-                        prefixIcon: Icon(Icons.person), // Use prefixIcon here
-                      ),
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: TextField(
+                  controller: userName,
+                  decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
                     ),
+                    hintText: "Full Name",
+                    prefixIcon: const Icon(Icons.person),
                   ),
-                ],
+                ),
               ),
-              Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: TextField(
-                      decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                          hintText: "Mobile Number",
-                          prefixIcon: Icon(Icons.call)),
-                      keyboardType: TextInputType.number,
-                    ),
-                  ),
-                ],
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: TextField(
+                  controller: mobileNum,
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                      hintText: "Mobile Number",
+                      prefixIcon: const Icon(Icons.call)),
+                  keyboardType: TextInputType.number,
+                ),
               ),
-              Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: TextField(
-                      decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                          hintText: "Email Id",
-                          prefixIcon: Icon(Icons.email)),
-                    ),
-                  ),
-                ],
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: TextField(
+                  controller: emailAddress,
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                      hintText: "Email ID",
+                      prefixIcon: const Icon(Icons.email)),
+                ),
               ),
-              Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: TextField(
-                      decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                          hintText: "Password",
-                          prefixIcon: Icon(Icons.lock)),
-                    ),
-                  ),
-                ],
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: TextField(
+                  controller: newPassword,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                      hintText: "Password",
+                      prefixIcon: const Icon(Icons.lock)),
+                ),
               ),
-              Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(10.0),
-                    child: TextField(
-                      decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                          hintText: "Confirm Password",
-                          prefixIcon: Icon(Icons.lock)),
-                    ),
-                  ),
-                ],
+              Padding(
+                padding: const EdgeInsets.all(10.0),
+                child: TextField(
+                  controller: confirmPassword,
+                  obscureText: true,
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                      hintText: "Confirm Password",
+                      prefixIcon: const Icon(Icons.lock)),
+                ),
               ),
-              SizedBox(
-                height: 15,
+              const SizedBox(height: 15),
+              ElevatedButton(
+                onPressed: registerUser,
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                child: const Text(
+                  "Sign Up",
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold),
+                ),
               ),
-              Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: ElevatedButton(
-                      onPressed: () {},
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue),
-                      child: Text(
-                        "Sign Up",
-                        style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  Text(
-                    "Already Have An Account?",
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Loginpage()));
-                      },
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.blue),
-                      child: Text(
-                        "Login",
-                        style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
-                      ))
-                ],
-              )
+              const SizedBox(height: 10),
+              const Text(
+                "Already Have An Account?",
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => Loginpage()));
+                },
+                style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                child: const Text(
+                  "Login",
+                  style: TextStyle(
+                      color: Colors.white, fontWeight: FontWeight.bold),
+                ),
+              ),
             ],
           ),
         ));

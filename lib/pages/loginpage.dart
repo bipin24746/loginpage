@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:loginpage/pages/registerpage.dart';
 
@@ -10,26 +10,62 @@ class Loginpage extends StatefulWidget {
 }
 
 class _LoginpageState extends State<Loginpage> {
-  bool obsecureText = true; // Keep this for password hiding
+  TextEditingController emailAddress = TextEditingController();
+  TextEditingController loginPassword = TextEditingController();
+  bool obsecureText = true; // For hiding/showing password
+
+  final FirebaseAuth auth = FirebaseAuth.instance;
+
+  Future<void> loginUser() async {
+    String email = emailAddress.text.trim();
+    String password = loginPassword.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please fill in both fields.")),
+      );
+      return;
+    }
+    try {
+      UserCredential userCredential = await auth.signInWithEmailAndPassword(
+          email: email, password: password);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          content: Text("Login Successful, ${userCredential.user!.email}")));
+      // Navigate to another page after login (HomePage or any other)
+      // Navigator.pushReplacement(
+      //     context, MaterialPageRoute(builder: (context) => HomePage()));
+    } on FirebaseAuthException catch (e) {
+      // Handle errors during login
+      if (e.code == 'user-not-found') {
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("No user found for that email.")));
+      } else if (e.code == 'wrong-password') {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text("Incorrect password.")));
+      } else {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(e.message.toString())));
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
           centerTitle: true,
-          iconTheme: IconThemeData(color: Colors.white),
-          title: Text(
+          iconTheme: const IconThemeData(color: Colors.white),
+          title: const Text(
             "LoginPage",
             style: TextStyle(
                 fontSize: 30, fontWeight: FontWeight.bold, color: Colors.white),
           ),
           backgroundColor: Colors.blue),
       body: SingleChildScrollView(
-        // Use SingleChildScrollView for scrolling
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
+            const Padding(
               padding: EdgeInsets.only(top: 90, left: 50),
               child: Text(
                 "Enter Login Details",
@@ -40,9 +76,9 @@ class _LoginpageState extends State<Loginpage> {
                 ),
               ),
             ),
-            SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.only(left: 30),
+            const SizedBox(height: 20),
+            const Padding(
+              padding: EdgeInsets.only(left: 30),
               child: Text(
                 "Enter Your Email",
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
@@ -51,6 +87,7 @@ class _LoginpageState extends State<Loginpage> {
             Padding(
               padding: const EdgeInsets.all(15.0),
               child: TextField(
+                controller: emailAddress,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20)),
@@ -58,8 +95,8 @@ class _LoginpageState extends State<Loginpage> {
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.only(left: 30),
+            const Padding(
+              padding: EdgeInsets.only(left: 30),
               child: Text(
                 "Enter Your Password",
                 style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
@@ -68,6 +105,7 @@ class _LoginpageState extends State<Loginpage> {
             Padding(
               padding: const EdgeInsets.all(15),
               child: TextField(
+                controller: loginPassword,
                 obscureText: obsecureText,
                 decoration: InputDecoration(
                   border: OutlineInputBorder(
@@ -76,7 +114,7 @@ class _LoginpageState extends State<Loginpage> {
                   suffixIcon: IconButton(
                     onPressed: () {
                       setState(() {
-                        obsecureText = !obsecureText; // Toggles visibility
+                        obsecureText = !obsecureText; // Toggle visibility
                       });
                     },
                     icon: Icon(
@@ -88,25 +126,26 @@ class _LoginpageState extends State<Loginpage> {
             ),
             Center(
               child: ElevatedButton(
-                onPressed: () {},
-                child: Text("Login", style: TextStyle(color: Colors.white)),
+                onPressed: loginUser, // Call the loginUser function
+                child:
+                    const Text("Login", style: TextStyle(color: Colors.white)),
                 style: ElevatedButton.styleFrom(backgroundColor: Colors.blue),
               ),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Center(
               child: Column(
                 children: [
-                  Text("Dont have an account?"),
+                  const Text("Don't have an account?"),
                   ElevatedButton(
                     onPressed: () {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => Registerpage(),
+                            builder: (context) => const Registerpage(),
                           ));
                     },
-                    child: Text("Create Account",
+                    child: const Text("Create Account",
                         style: TextStyle(color: Colors.white)),
                     style:
                         ElevatedButton.styleFrom(backgroundColor: Colors.blue),
